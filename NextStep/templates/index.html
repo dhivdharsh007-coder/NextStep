@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Home — NextStep{% endblock %}
+{% block page_title %}Welcome to NextStep{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    {% if welcome %}
+    <!-- WELCOME STATE -->
+    <div class="hero-section mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="welcome-msg">
+                    🎉 Welcome to NextStep, <strong>{{ name }}</strong>!<br>
+                    <span style="font-size:1rem;font-weight:400;opacity:.85">Let's discover your ideal career
+                        path.</span>
+                </div>
+                <div class="mt-4 text-white" style="opacity:.9">
+                    <p><i class="bi bi-mortarboard-fill me-2"></i>{{ degree }}</p>
+                    <p class="mb-0" style="font-size:.9rem;opacity:.8">Your personalized journey begins here. Complete
+                        the assessment to get your domain recommendations.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mt-3 mt-md-0">
+                <div style="font-size:5rem;">🚀</div>
+                <a href="{{ url_for('assessment') }}" class="btn-primary-ns mt-3"
+                    style="background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,0.4);">
+                    <i class="bi bi-play-fill"></i> Start Assessment
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- LANDING STATE -->
+    <div class="hero-section mb-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <p style="font-size:.85rem;opacity:.8;letter-spacing:.06em;font-weight:600;" class="mb-2">AI-POWERED
+                    CAREER GUIDANCE</p>
+                <h1 class="hero-title">Discover Your Path, <br>Design Your Future</h1>
+                <p class="hero-subtitle">The intelligent platform that maps engineering students to their ideal career
+                    domains with personalized roadmaps, skill analysis, and curated resources.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:.82rem;opacity:.85;"><i
+                            class="bi bi-check-circle-fill"></i>AI Domain Matching</div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:.82rem;opacity:.85;"><i
+                            class="bi bi-check-circle-fill"></i>Resume Analysis</div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:.82rem;opacity:.85;"><i
+                            class="bi bi-check-circle-fill"></i>Curated Roadmaps</div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-form">
+                    <h5 style="color:#fff;font-weight:700;margin-bottom:20px;font-size:1.05rem;">👋 Let's get started
+                    </h5>
+                    <form method="POST" action="{{ url_for('index') }}">
+                        <div class="mb-3">
+                            <label
+                                style="color:rgba(255,255,255,.85);font-size:.85rem;font-weight:600;margin-bottom:6px;"
+                                class="d-block">Your Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Dhivya Dharshini"
+                                required>
+                        </div>
+                        <div class="mb-4">
+                            <label
+                                style="color:rgba(255,255,255,.85);font-size:.85rem;font-weight:600;margin-bottom:6px;"
+                                class="d-block">Current Education Level</label>
+                            <select name="degree" class="form-control" required style="cursor:pointer;color:#333;">
+                                <option value="" disabled selected>Select your education level</option>
+                                <option value="B.E (Bachelor of Engineering)">B.E (Bachelor of Engineering)</option>
+                                <option value="B.Tech (Bachelor of Technology)">B.Tech (Bachelor of Technology)</option>
+                                <option value="Engineering Diploma">Engineering Diploma</option>
+                                <option value="Undergraduate Student">Undergraduate Student</option>
+                                <option value="Postgraduate Student">Postgraduate Student</option>
+                                <option value="Self Learner">Self Learner</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary-ns w-100 justify-content-center"
+                            style="background:rgba(255,255,255,1);color:#4A90E2;">
+                            <i class="bi bi-arrow-right-circle-fill"></i> Begin My Journey
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- FEATURES -->
+    <h2 class="section-title mt-2"><i class="bi bi-stars" style="color:var(--primary)"></i> Platform Features</h2>
+    <div class="row g-4 mb-4">
+        {% set features = [
+        ('bi-clipboard2-check-fill','#4A90E2','Smart Assessment','Answer questions about your interests and skills to
+        get AI-powered domain recommendations tailored to you.'),
+        ('bi-map-fill','#6C63FF','Personalized Roadmap','Step-by-step learning paths with curated YouTube resources for
+        your chosen career domain.'),
+        ('bi-file-earmark-person-fill','#E91E8C','Resume Analyzer','Upload your resume and get an ATS compatibility
+        score with actionable improvement tips.'),
+        ('bi-building-fill','#FF6B35','Company Explorer','Discover top companies hiring in your domain with direct
+        career page links.'),
+        ('bi-lightning-fill','#00BFA5','Skill Gap Analysis','Pinpoint missing skills and get targeted resources to
+        bridge your knowledge gaps.'),
+        ('bi-speedometer2','#FF4081','Student Dashboard','Track your progress, set goals, and visualize skill growth
+        with interactive charts.'),
+        ] %}
+        {% for icon, color, title, desc in features %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card-ns p-4 h-100">
+                <div
+                    style="width:48px;height:48px;background:{{ color }}20;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:{{ color }};margin-bottom:14px;">
+                    <i class="bi {{ icon }}"></i>
+                </div>
+                <h6 style="font-weight:700;margin-bottom:8px;">{{ title }}</h6>
+                <p style="font-size:.84rem;color:var(--text-muted);margin:0;">{{ desc }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center py-4">
+        <a href="{{ url_for('assessment') }}" class="btn-primary-ns" style="padding:14px 40px;font-size:1rem;">
+            <i class="bi bi-compass-fill"></i> Start Career Discovery
+        </a>
+    </div>
+
+</div>
+{% endblock %}

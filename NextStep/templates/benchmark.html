@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Benchmark — NextStep{% endblock %}
+{% block page_title %}Preparation Level Benchmark{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:28px;">Track your readiness level and know exactly
+        what to do next to become interview-ready.</p>
+
+    <!-- DYNAMIC BENCHMARK RESULTS -->
+    <div class="card-ns p-4 mb-4" style="border-top: 5px solid var(--primary);">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <h5 style="font-weight:800;margin:0;">Your Preparation Level: <span style="color:var(--primary);">{{ level
+                    }}</span></h5>
+            <h3 style="font-weight:800;color:var(--text);margin:0;">{{ score }} <span
+                    style="font-size:1rem;color:var(--text-muted);font-weight:600;">/ 100 Points</span></h3>
+        </div>
+
+        <div class="progress-tier mb-4" style="height:14px;background:var(--border);">
+            <div class="progress-fill" style="width:{{ score }}%;background:linear-gradient(90deg, #4A90E2, #6C63FF);">
+            </div>
+        </div>
+
+        <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:24px;">Complete tasks, building projects, and
+            improve your resume to reach 100 points and become interview-ready.</p>
+
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div
+                    style="background:var(--bg);padding:18px;border-radius:12px;text-align:center;border:1px solid var(--border);">
+                    <div style="font-size:1.6rem;color:#4A90E2;font-weight:800;">{{ modules }}<span
+                            style="font-size:.85rem;color:var(--text-muted);">/30</span></div>
+                    <div style="font-size:.78rem;font-weight:600;margin-top:8px;">Learning Modules</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div
+                    style="background:var(--bg);padding:18px;border-radius:12px;text-align:center;border:1px solid var(--border);">
+                    <div style="font-size:1.6rem;color:#E91E8C;font-weight:800;">{{ projects }}<span
+                            style="font-size:.85rem;color:var(--text-muted);">/30</span></div>
+                    <div style="font-size:.78rem;font-weight:600;margin-top:8px;">Projects</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div
+                    style="background:var(--bg);padding:18px;border-radius:12px;text-align:center;border:1px solid var(--border);">
+                    <div style="font-size:1.6rem;color:#00BFA5;font-weight:800;">{{ resume }}<span
+                            style="font-size:.85rem;color:var(--text-muted);">/20</span></div>
+                    <div style="font-size:.78rem;font-weight:600;margin-top:8px;">Resume Score</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div
+                    style="background:var(--bg);padding:18px;border-radius:12px;text-align:center;border:1px solid var(--border);">
+                    <div style="font-size:1.6rem;color:#FF6B35;font-weight:800;">{{ tests }}<span
+                            style="font-size:.85rem;color:var(--text-muted);">/20</span></div>
+                    <div style="font-size:.78rem;font-weight:600;margin-top:8px;">Skill Tests</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center pb-2">
+        <a href="{{ url_for('dashboard') }}" class="btn-primary-ns">
+            <i class="bi bi-speedometer2"></i> Track My Progress on Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

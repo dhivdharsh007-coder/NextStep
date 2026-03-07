@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Roadmap — {{ domain }}{% endblock %}
+{% block page_title %}Learning Roadmap<span
+    style="font-size:.75rem;background:var(--primary-light);color:var(--primary);padding:3px 12px;border-radius:20px;font-weight:600;margin-left:12px;">{{
+    domain }}</span>{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    <!-- Domain Selector -->
+    <div class="card-ns p-3 mb-4 d-flex align-items-center gap-3 flex-wrap">
+        <span style="font-size:.85rem;color:var(--text-muted);font-weight:500;">Switch Domain:</span>
+        {% for d in all_domains %}
+        <a href="{{ url_for('roadmap', domain=d) }}"
+            style="padding:6px 16px;border-radius:20px;font-size:.82rem;font-weight:600;text-decoration:none;border:2px solid {% if d==domain %}var(--primary){% else %}var(--border){% endif %};background:{% if d==domain %}var(--primary-light){% else %}transparent{% endif %};color:{% if d==domain %}var(--primary){% else %}var(--text-muted){% endif %};">
+            {{ d }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+
+            <h5 class="section-title"><i class="bi bi-stairs" style="color:var(--primary)"></i> Beginner Learning Path
+            </h5>
+
+            {% for step in steps %}
+            <div class="step-card animate-in" style="animation-delay:{{ loop.index0 * 0.1 }}s">
+                <div class="step-header" onclick="toggleStep({{ loop.index }})" id="sh_{{ loop.index }}">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="step-number">{{ loop.index }}</div>
+                        <div>
+                            <div style="font-weight:700;font-size:.95rem;">{{ step.title }}</div>
+                            <div style="font-size:.78rem;color:var(--text-muted);">{{ step.subtopics|length }} topics
+                            </div>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-down" id="si_{{ loop.index }}"
+                        style="color:var(--text-muted);transition:transform .3s;"></i>
+                </div>
+                <div class="step-body" id="sb_{{ loop.index }}">
+                    <div class="mb-3">
+                        {% for sub in step.subtopics %}
+                        <span class="subtopic-chip">{{ sub }}</span>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ step.youtube }}" target="_blank" class="yt-link">
+                        <i class="bi bi-youtube"></i> Watch on YouTube
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <!-- Suggested Projects -->
+            <h5 class="section-title"><i class="bi bi-folder-fill" style="color:#FF6B35"></i> Beginner Projects</h5>
+            <div class="card-ns p-3">
+                {% for proj in projects %}
+                <div class="project-card">
+                    <i class="bi bi-code-slash project-icon"></i>
+                    <span style="font-size:.88rem;font-weight:500;">{{ proj }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card-ns p-3 mt-4">
+                <h6 style="font-weight:700;margin-bottom:14px;font-size:.9rem;color:var(--text);">Quick Actions</h6>
+                <a href="{{ url_for('resume') }}"
+                    class="d-flex align-items-center gap-10 p-2 rounded text-decoration-none"
+                    style="gap:10px;color:var(--text);font-size:.85rem;border-radius:8px;transition:var(--transition);padding:10px 12px !important;"
+                    onmouseover="this.style.background='var(--primary-light)'"
+                    onmouseout="this.style.background='transparent'">
+                    <i class="bi bi-file-earmark-person-fill" style="color:var(--primary)"></i> Analyze My Resume
+                </a>
+                <a href="{{ url_for('skills') }}"
+                    class="d-flex align-items-center gap-10 p-2 rounded text-decoration-none"
+                    style="gap:10px;color:var(--text);font-size:.85rem;border-radius:8px;transition:var(--transition);padding:10px 12px !important;"
+                    onmouseover="this.style.background='var(--primary-light)'"
+                    onmouseout="this.style.background='transparent'">
+                    <i class="bi bi-lightning-fill" style="color:#FF6B35"></i> Check Skill Gaps
+                </a>
+                <a href="{{ url_for('companies') }}"
+                    class="d-flex align-items-center gap-10 p-2 rounded text-decoration-none"
+                    style="gap:10px;color:var(--text);font-size:.85rem;border-radius:8px;transition:var(--transition);padding:10px 12px !important;"
+                    onmouseover="this.style.background='var(--primary-light)'"
+                    onmouseout="this.style.background='transparent'">
+                    <i class="bi bi-building-fill" style="color:#6C63FF"></i> Explore Companies
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Open first step by default
+    document.addEventListener('DOMContentLoaded', () => toggleStep(1));
+    function toggleStep(idx) {
+        const body = document.getElementById('sb_' + idx);
+        const icon = document.getElementById('si_' + idx);
+        if (!body) return;
+        const isOpen = body.style.display !== 'none' && body.style.maxHeight !== '0px';
+        body.style.display = isOpen ? 'none' : 'block';
+        icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+</script>
+{% endblock %}

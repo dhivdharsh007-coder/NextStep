@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Resume Analyzer — NextStep{% endblock %}
+{% block page_title %}Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    {% if result %}
+    <!-- RESULT STATE -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card-ns p-4 text-center">
+                <h6 style="font-weight:700;margin-bottom:20px;">Your Resume Score</h6>
+                <div class="score-circle-wrapper mb-3">
+                    <div class="score-circle" style="--pct:{{ result.score * 3.6 }}deg">
+                        <div class="score-value">{{ result.score }}</div>
+                        <div class="score-label">/ 100</div>
+                    </div>
+                </div>
+                <p style="font-size:.82rem;color:var(--text-muted);">Domain: <strong>{{ result.domain }}</strong></p>
+                {% if result.score >= 70 %}
+                <span
+                    style="background:#E8F5E9;color:#2E7D32;padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:700;">✓
+                    Strong Resume</span>
+                {% elif result.score >= 40 %}
+                <span
+                    style="background:#FFF3E0;color:#E65100;padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:700;">⚡
+                    Needs Improvement</span>
+                {% else %}
+                <span
+                    style="background:#FFEBEE;color:#C62828;padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:700;">🔧
+                    Needs Major Work</span>
+                {% endif %}
+                <div class="mt-4">
+                    <a href="{{ url_for('resume') }}" class="btn-primary-ns w-100 justify-content-center"
+                        style="font-size:.85rem;padding:10px;">
+                        <i class="bi bi-arrow-counterclockwise"></i> Re-Analyze
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card-ns p-4">
+                <h6 style="font-weight:700;margin-bottom:18px;font-size:1rem;">💡 Improvement Suggestions</h6>
+                {% for s in result.suggestions %}
+                <div class="suggestion-item">
+                    <i class="bi bi-arrow-right-circle-fill"></i>
+                    <span>{{ s }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="card-ns p-4 mt-4">
+                <h6 style="font-weight:700;margin-bottom:16px;">ATS Compatibility Insights</h6>
+                <div class="row g-3">
+                    {% set checks = [('formatting','Resume formatting','Heading structure and
+                    layout'),('keywords','Keyword alignment','Domain-relevant terms'),('domain','Domain skill
+                    match','Skills matched to {{ result.domain }}'),('ats','ATS compatibility','Parseable by systems')]
+                    %}
+                    {% for key, title, desc in [('fmt','Formatting','Clean heading
+                    structure'),('kw','Keywords','Domain-specific terms used'),('match','Skill Match','Skills align with
+                    '+result.domain),('ats','ATS Ready','Machine-readable format')] %}
+                    <div class="col-6">
+                        <div style="background:var(--bg);border-radius:10px;padding:14px;">
+                            <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;">{{ desc }}</div>
+                            <div
+                                style="font-weight:700;font-size:.9rem;color:{% if result.score >= 50 %}#2E7D32{% else %}#E65100{% endif %};">
+                                <i
+                                    class="bi bi-{% if result.score >= 50 %}check-circle-fill{% else %}exclamation-circle-fill{% endif %}"></i>
+                                {{ title }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- UPLOAD STATE -->
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card-ns p-4 mb-4">
+                <h5 style="font-weight:700;margin-bottom:8px;">📄 Upload Your Resume</h5>
+                <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:24px;">We'll analyze your resume
+                    against your target domain and provide an ATS compatibility score with actionable feedback.</p>
+
+                <form method="POST" enctype="multipart/form-data" id="resumeForm">
+                    <label for="resumeFile" class="upload-zone" id="uploadZone">
+                        <i class="bi bi-cloud-upload"></i>
+                        <div style="font-weight:700;font-size:1rem;margin-bottom:6px;">Drop your PDF here</div>
+                        <div style="font-size:.82rem;color:var(--text-muted);">or click to browse — PDF format only
+                        </div>
+                        <div id="fileName"
+                            style="margin-top:12px;font-size:.82rem;color:var(--primary);font-weight:600;"></div>
+                    </label>
+                    <input type="file" name="resume" id="resumeFile" accept=".pdf" style="display:none"
+                        onchange="showFileName(this)">
+                    <button type="submit" class="btn-primary-ns w-100 justify-content-center mt-3"
+                        style="padding:12px;">
+                        <i class="bi bi-bar-chart-fill"></i> Analyze Resume
+                    </button>
+                </form>
+            </div>
+
+            <div class="card-ns p-4">
+                <h6 style="font-weight:700;margin-bottom:16px;">What we evaluate:</h6>
+                <div class="row g-3">
+                    {% for icon, title, desc in [('file-text-fill','Resume Formatting','Checks structure, headings, and
+                    visual layout'),('key-fill','Keyword Alignment','Matches keywords with your target
+                    domain'),('tools','Skill Match','Compares your skills to domain requirements'),('robot','ATS
+                    Compatibility','Tests machine-readability for ATS systems')] %}
+                    <div class="col-md-6">
+                        <div style="display:flex;gap:12px;align-items:flex-start;">
+                            <div
+                                style="width:36px;height:36px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0;">
+                                <i class="bi bi-{{ icon }}"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight:600;font-size:.88rem;">{{ title }}</div>
+                                <div style="font-size:.78rem;color:var(--text-muted);">{{ desc }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showFileName(input) {
+        document.getElementById('fileName').textContent = input.files[0] ? '📎 ' + input.files[0].name : '';
+    }
+</script>
+{% endblock %}

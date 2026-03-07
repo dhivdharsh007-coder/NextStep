@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — NextStep{% endblock %}
+{% block page_title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    <!-- STAT CARDS -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#EBF4FF;color:#4A90E2;"><i class="bi bi-compass-fill"></i>
+                </div>
+                <div class="stat-label">Career Domain</div>
+                <div class="stat-value" style="font-size:1rem;font-weight:700;color:var(--primary);">{{ domain or '—' }}
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#E8F5E9;color:#43A047;"><i
+                        class="bi bi-file-earmark-check-fill"></i></div>
+                <div class="stat-label">Resume Score</div>
+                <div class="stat-value">{{ resume_score }}<span
+                        style="font-size:.85rem;font-weight:500;color:var(--text-muted);">/100</span></div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#EDE7F6;color:#7B1FA2;"><i class="bi bi-lightning-fill"></i>
+                </div>
+                <div class="stat-label">Skills Selected</div>
+                <div class="stat-value">8 <span
+                        style="font-size:.85rem;font-weight:500;color:var(--text-muted);">tracked</span></div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:#FFF3E0;color:#E65100;"><i class="bi bi-flag-fill"></i></div>
+                <div class="stat-label">Goals Set</div>
+                <div class="stat-value">{{ (1 if goals.short_term else 0) + (1 if goals.long_term else 0) }}<span
+                        style="font-size:.85rem;font-weight:500;color:var(--text-muted);">/2</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- RADAR CHART -->
+        <div class="col-lg-6">
+            <div class="card-ns p-4 h-100">
+                <h6 style="font-weight:700;margin-bottom:20px;font-size:1rem;color:var(--text);">📊 Skill Proficiency
+                    Radar</h6>
+                <div style="position:relative;height:280px;">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- GOALS -->
+        <div class="col-lg-6">
+            <div class="card-ns p-4 mb-4">
+                <h6 style="font-weight:700;margin-bottom:16px;font-size:1rem;">🎯 Your Goals</h6>
+                {% if goals.short_term %}
+                <div class="goal-card mb-3">
+                    <div class="goal-type" style="color:var(--primary);">⚡ SHORT-TERM GOAL</div>
+                    <div style="font-size:.92rem;font-weight:500;">{{ goals.short_term }}</div>
+                    <div class="mt-2">
+                        <div style="height:6px;background:var(--border);border-radius:3px;">
+                            <div
+                                style="height:6px;width:40%;background:linear-gradient(90deg,#4A90E2,#6C63FF);border-radius:3px;">
+                            </div>
+                        </div>
+                        <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">40% complete</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if goals.long_term %}
+                <div class="goal-card">
+                    <div class="goal-type" style="color:#6C63FF;">🚀 LONG-TERM GOAL</div>
+                    <div style="font-size:.92rem;font-weight:500;">{{ goals.long_term }}</div>
+                    <div class="mt-2">
+                        <div style="height:6px;background:var(--border);border-radius:3px;">
+                            <div
+                                style="height:6px;width:15%;background:linear-gradient(90deg,#6C63FF,#E91E8C);border-radius:3px;">
+                            </div>
+                        </div>
+                        <div style="font-size:.72rem;color:var(--text-muted);margin-top:4px;">15% complete — Stay
+                            consistent!</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if not goals.short_term and not goals.long_term %}
+                <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:.88rem;">No goals set yet.
+                    Add your goals below 👇</div>
+                {% endif %}
+            </div>
+
+            <!-- DAILY PRACTICE -->
+            <div class="card-ns p-4 mb-4"
+                style="background: linear-gradient(135deg, #4A90E2 0%, #63a4ff 100%); color: #fff;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 style="font-weight:700;margin:0;font-size:1.05rem;">
+                        <i class="bi bi-patch-check-fill me-2"></i> Daily Practice
+                    </h6>
+                    <span class="badge bg-white text-primary rounded-pill px-3 py-1"
+                        style="font-weight:700;font-size:0.75rem;">DAY 01</span>
+                </div>
+                <p style="font-size:0.9rem;opacity:0.95;margin-bottom:20px;">
+                    Strengthen your <strong>{{ domain }}</strong> skills with a quick 5-question session.
+                </p>
+                <div class="d-grid">
+                    <a href="{{ url_for('daily_practice_view') }}" class="btn btn-light"
+                        style="font-weight:700;color:#4A90E2;border-radius:12px;padding:10px;">
+                        Start Today's Session
+                    </a>
+                </div>
+            </div>
+
+            <!-- SET GOALS FORM -->
+            <div class="card-ns p-4">
+                <h6 style="font-weight:700;margin-bottom:14px;font-size:.95rem;">➕ Set New Goals</h6>
+                <form method="POST" action="{{ url_for('dashboard') }}">
+                    <div class="mb-3">
+                        <label style="font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:5px;"
+                            class="d-block">⚡ Short-Term Goal</label>
+                        <input type="text" name="short_term" class="form-control form-control-sm"
+                            placeholder="e.g. Learn Python loops this week" style="border-radius:8px;">
+                    </div>
+                    <div class="mb-3">
+                        <label style="font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:5px;"
+                            class="d-block">🚀 Long-Term Goal</label>
+                        <input type="text" name="long_term" class="form-control form-control-sm"
+                            placeholder="e.g. Become job-ready for Data Science in 6 months" style="border-radius:8px;">
+                    </div>
+                    <button type="submit" class="btn-primary-ns w-100 justify-content-center"
+                        style="padding:10px;font-size:.85rem;">
+                        <i class="bi bi-check-circle-fill"></i> Save Goals
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEEKLY TASKS -->
+    <div class="row g-4 mt-0">
+        <div class="col-md-6">
+            <div class="card-ns p-4">
+                <h6 style="font-weight:700;margin-bottom:16px;font-size:.95rem;">✅ Completed This Week</h6>
+                {% for task in ['Set up development environment','Completed Python basics module','Pushed first project
+                to GitHub'] %}
+                <div
+                    style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.85rem;">
+                    <i class="bi bi-check-circle-fill" style="color:#43A047;font-size:1rem;"></i>
+                    <span>{{ task }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card-ns p-4">
+                <h6 style="font-weight:700;margin-bottom:16px;font-size:.95rem;">📌 Recommended Next Tasks</h6>
+                {% for task in ['Watch roadmap Step 2 YouTube video','Practice 5 LeetCode easy problems','Add README to
+                GitHub project','Read about your domain companies'] %}
+                <div
+                    style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.85rem;">
+                    <i class="bi bi-arrow-right-circle-fill" style="color:var(--primary);font-size:1rem;"></i>
+                    <span>{{ task }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const labels = JSON.parse('{{ skill_labels | tojson | safe }}');
+    const scores = JSON.parse('{{ skill_scores | tojson | safe }}');
+    const ctx = document.getElementById('radarChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Your Skills',
+                    data: scores,
+                    backgroundColor: 'rgba(74, 144, 226, 0.15)',
+                    borderColor: '#4A90E2',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#4A90E2',
+                    pointRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { display: false },
+                        grid: { color: 'rgba(0,0,0,0.06)' },
+                        pointLabels: { font: { size: 11, family: 'Inter' }, color: '#4A5568' }
+                    }
+                },
+                plugins: { legend: { display: false } },
+                animation: { duration: 1000, easing: 'easeOutQuart' }
+            }
+        });
+    }
+</script>
+{% endblock %}

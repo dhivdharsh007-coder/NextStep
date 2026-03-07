@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Company Explorer — NextStep{% endblock %}
+{% block page_title %}Company Explorer{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    <!-- Domain Filter -->
+    <div class="card-ns p-3 mb-4">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <span style="font-size:.85rem;color:var(--text-muted);font-weight:600;white-space:nowrap;"><i
+                    class="bi bi-funnel-fill" style="color:var(--primary)"></i> Filter by Domain:</span>
+            {% for d in all_domains %}
+            <a href="{{ url_for('companies', domain=d) }}"
+                style="padding:7px 18px;border-radius:20px;font-size:.82rem;font-weight:600;text-decoration:none;border:2px solid {% if d==domain %}var(--primary){% else %}var(--border){% endif %};background:{% if d==domain %}var(--primary){% else %}#fff{% endif %};color:{% if d==domain %}#fff{% else %}var(--text-muted){% endif %};transition:all .2s;white-space:nowrap;">
+                {{ d }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <h5 class="section-title"><i class="bi bi-building-fill" style="color:var(--primary)"></i> Top Hiring Companies — {{
+        domain }}</h5>
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:24px;">Click on any company to visit their official
+        careers page.</p>
+
+    {% set company_icons = ['G','M','A','C','I','P','D','N','O','Ac','Ca','T','In','W','Z'] %}
+    {% set icon_colors =
+    ['#4285F4','#00A4EF','#FF9900','#1BA0D7','#1F70C1','#FA582D','#86BC25','#0076CE','#F80000','#A100FF','#0070AD','#B5122E','#007CC3','#9B59B6','#E2261A']
+    %}
+
+    <div class="row g-3">
+        {% for company in companies %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="company-card">
+                <div class="company-logo"
+                    style="background:{{ icon_colors[loop.index0 % icon_colors|length] }}20;color:{{ icon_colors[loop.index0 % icon_colors|length] }};">
+                    {{ company.name[:2] }}
+                </div>
+                <div class="company-name">{{ company.name }}</div>
+                <a href="{{ company.url }}" target="_blank" class="company-link">
+                    <i class="bi bi-box-arrow-up-right"></i> View Careers
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

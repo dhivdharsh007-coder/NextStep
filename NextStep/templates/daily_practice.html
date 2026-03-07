@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Daily Practice — NextStep{% endblock %}
+{% block page_title %}Daily Practice (Q&A Session){% endblock %}
+
+{% block content %}
+<div class="animate-in">
+    <div class="card-ns p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="section-title mb-1"><i class="bi bi-patch-check-fill" style="color:var(--primary)"></i> {{
+                    domain }} Quiz</h5>
+                <p style="font-size:.85rem;color:var(--text-muted);">Strengthen your knowledge with 5 daily MCQs</p>
+            </div>
+            <div class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill"
+                style="font-weight:600;">
+                Today's Session
+            </div>
+        </div>
+
+        <form action="{{ url_for('daily_practice') }}" method="POST">
+            {% for q in questions %}
+            {% set q_idx = loop.index0 %}
+            <div class="mb-5">
+                <p style="font-weight:600;font-size:1.05rem;margin-bottom:15px;">{{ loop.index }}. {{ q.q }}</p>
+                <div class="row g-3">
+                    {% for opt in q.options %}
+                    <div class="col-12 col-md-6">
+                        <label class="q-option p-3 border rounded-3 d-flex align-items-center gap-3 w-100"
+                            style="cursor:pointer;transition:all .2s;">
+                            <input type="radio" name="q_{{ q_idx }}" value="{{ opt }}" required>
+                            <span style="font-size:.95rem;">{{ opt }}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center mt-5">
+                <button type="submit" class="btn-primary-ns px-5 py-3">
+                    <i class="bi bi-send-fill"></i> Submit Answers
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .q-option:hover {
+        background-color: #f8f9fa;
+        border-color: var(--primary) !important;
+    }
+
+    .q-option input:checked+span {
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    .q-option:has(input:checked) {
+        background-color: var(--primary-bg);
+        border-color: var(--primary) !important;
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.1);
+    }
+</style>
+{% endblock %}

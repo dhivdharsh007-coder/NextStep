@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Skill Gaps — NextStep{% endblock %}
+{% block page_title %}Personalized Skill Recommendations{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    <div class="card-ns p-3 mb-4 d-flex align-items-center gap-3" style="border-left:4px solid var(--primary);">
+        <i class="bi bi-lightning-fill" style="color:var(--primary);font-size:1.4rem;"></i>
+        <div>
+            <div style="font-weight:700;">Domain: {{ domain }}</div>
+            <div style="font-size:.82rem;color:var(--text-muted);">Based on your assessment, here are the skills you
+                should prioritize learning.</div>
+        </div>
+    </div>
+
+    {% if missing_skills %}
+    <h5 class="section-title"><i class="bi bi-exclamation-triangle-fill" style="color:#FF6B35"></i> Missing Skills to
+        Fill</h5>
+
+    {% for item in missing_skills %}
+    <div class="missing-skill-card">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <div class="d-flex align-items-center gap-3">
+                <div
+                    style="width:44px;height:44px;background:var(--primary-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--primary);">
+                    <i class="bi bi-book-fill"></i>
+                </div>
+                <div>
+                    <div class="skill-name">{{ item.skill }}</div>
+                    <span class="skill-gap-badge">⚠ Skill Gap Detected</span>
+                </div>
+            </div>
+            <a href="{{ item.youtube }}" target="_blank" class="yt-link">
+                <i class="bi bi-youtube"></i> Learn on YouTube
+            </a>
+        </div>
+        <div class="mini-project">
+            <i class="bi bi-folder-fill" style="margin-top:2px;"></i>
+            <div>
+                <div style="font-weight:700;font-size:.82rem;margin-bottom:2px;">Mini Project</div>
+                <div>{{ item.project }}</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="text-center py-5">
+        <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+        <h5 style="font-weight:700;">You have all required skills for {{ domain }}!</h5>
+        <p style="color:var(--text-muted);font-size:.9rem;">You're well on your way. Head to the roadmap to deepen your
+            knowledge.</p>
+        <a href="{{ url_for('roadmap') }}" class="btn-primary-ns mt-3"><i class="bi bi-map-fill"></i> View Roadmap</a>
+    </div>
+    {% endif %}
+
+    <!-- ALL SKILL RESOURCES -->
+    <h5 class="section-title mt-4"><i class="bi bi-stars" style="color:#6C63FF"></i> Extra Skill Resources</h5>
+    <div class="row g-3">
+        {% for skill, res in all_skills.items() %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card-ns p-3" style="display:flex;flex-direction:column;gap:8px;">
+                <div style="font-weight:700;font-size:.9rem;">{{ skill }}</div>
+                <a href="{{ res.youtube }}" target="_blank" class="yt-link" style="font-size:.78rem;padding:6px 12px;">
+                    <i class="bi bi-youtube"></i> YouTube Tutorial
+                </a>
+                <div style="font-size:.78rem;color:var(--text-muted);"><i class="bi bi-folder2-open"
+                        style="color:var(--primary);margin-right:4px;"></i>{{ res.project }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

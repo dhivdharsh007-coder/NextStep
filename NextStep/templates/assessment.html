@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block title %}Assessment — NextStep{% endblock %}
+{% block page_title %}Interest & Skill Assessment{% endblock %}
+
+{% block content %}
+<div class="animate-in">
+
+    {% if submitted %}
+    <!-- DOMAIN RESULT -->
+    <div class="domain-result mb-4">
+        <p style="opacity:.8;font-size:.85rem;margin-bottom:6px;">Based on your profile, we recommend</p>
+        <div class="domain-badge-lg">🎯 {{ domain }}</div>
+        <p class="mt-3" style="opacity:.85;font-size:.9rem;">Your top 3 career matches:</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap mt-2">
+            {% for d in domains %}
+            <a href="{{ url_for('roadmap', domain=d) }}"
+                style="background:rgba(255,255,255,{% if loop.first %}0.3{% else %}0.15{% endif %});border:2px solid rgba(255,255,255,{% if loop.first %}0.6{% else %}0.3{% endif %});border-radius:40px;padding:8px 22px;color:#fff;text-decoration:none;font-weight:{% if loop.first %}700{% else %}500{% endif %};font-size:.9rem;transition:all .2s;">
+                {% if loop.first %}🏆{% elif loop.index == 2 %}🥈{% else %}🥉{% endif %} {{ d }}
+            </a>
+            {% endfor %}
+        </div>
+        <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{{ url_for('roadmap', domain=domain) }}" class="btn-primary-ns"
+                style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);">
+                <i class="bi bi-map-fill"></i> View Roadmap
+            </a>
+            <a href="{{ url_for('assessment') }}" class="btn-primary-ns"
+                style="background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.3);">
+                <i class="bi bi-arrow-counterclockwise"></i> Retake
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- ASSESSMENT FORM -->
+    <form method="POST" action="{{ url_for('assessment') }}" id="assessmentForm">
+
+        <!-- INTERESTS -->
+        <div class="card-ns p-4 mb-4">
+            <h5 class="section-title"><i class="bi bi-heart-fill" style="color:#E91E8C"></i> Your Interests</h5>
+            <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:20px;">Select all areas that excite you
+                (choose at least 2)</p>
+            {% set interests = [
+            ('💻','Coding and Software Development'),('🎨','Graphic Design'),('✍️','Story Writing'),
+            ('🤖','Artificial Intelligence'),('📊','Data Analysis'),('🦾','Robotics'),
+            ('🔐','Cybersecurity'),('🌐','Internet of Things'),('🖥️','Web Development'),
+            ('📱','Mobile App Development'),('📣','Digital Marketing'),('📈','Business Strategy'),
+            ('☁️','Cloud Computing'),('🎮','Game Development'),('🖌️','Product Design'),
+            ] %}
+            <div class="row g-3">
+                {% for icon, label in interests %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="interest-card" onclick="toggleCard(this,'interests','{{ label }}')">
+                        <div class="icon">{{ icon }}</div>
+                        <div class="label">{{ label }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div id="interests-inputs"></div>
+        </div>
+
+        <!-- SUBJECTS -->
+        <div class="card-ns p-4 mb-4">
+            <h5 class="section-title"><i class="bi bi-book-fill" style="color:#4A90E2"></i> Academic Subjects You Enjoy
+            </h5>
+            <div>
+                {% for sub in ['Data Structures','Algorithms','Operating Systems','Computer Networks','Database
+                Management Systems','Artificial Intelligence','Machine Learning','Embedded
+                Systems','Electronics','Digital Logic','Mathematics','Statistics'] %}
+                <span class="subject-chip" onclick="toggleChip(this,'subjects','{{ sub }}')">{{ sub }}</span>
+                {% endfor %}
+            </div>
+            <div id="subjects-inputs"></div>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="card-ns p-4 mb-4">
+            <h5 class="section-title"><i class="bi bi-tools" style="color:#6C63FF"></i> Your Current Skills</h5>
+            <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;">Select all skills you have
+                experience with</p>
+            <div>
+                {% for skill in ['Python','Java','C++','HTML','CSS','JavaScript','SQL','Machine Learning','Data
+                Visualization','UI/UX Design','Git and GitHub','Linux','Networking','Cloud Platforms','API Development']
+                %}
+                <span class="skill-chip" onclick="toggleChip(this,'skills','{{ skill }}')">
+                    <i class="bi bi-check2-circle"></i> {{ skill }}
+                </span>
+                {% endfor %}
+            </div>
+            <div id="skills-inputs"></div>
+        </div>
+
+        <!-- PERSONALITY -->
+        <div class="card-ns p-4 mb-4">
+            <h5 class="section-title"><i class="bi bi-person-fill" style="color:#FF6B35"></i> Your Personality Type</h5>
+            {% set personalities = [
+            ('🧠','Analytical thinker','You love data, logic, and structured problem solving'),
+            ('🎨','Creative thinker','You enjoy designing, imagining, and building novel ideas'),
+            ('🔧','Problem solver','You thrive when tackling complex challenges'),
+            ('🤝','Team collaborator','You work best with others toward shared goals'),
+            ('👑','Leader','You enjoy guiding teams and making strategic decisions'),
+            ('📚','Independent learner','You prefer self-directed, autonomous work'),
+            ('♟️','Strategic planner','You excel at long-term thinking and big-picture planning'),
+            ] %}
+            {% for icon, label, desc in personalities %}
+            <label class="personality-card" id="p_{{ loop.index }}">
+                <input type="radio" name="personality" value="{{ label }}" style="display:none"
+                    onchange="selectPersonality({{ loop.index }})">
+                <span style="font-size:1.4rem;">{{ icon }}</span>
+                <div>
+                    <div style="font-weight:600;font-size:.9rem;">{{ label }}</div>
+                    <div style="font-size:.78rem;color:var(--text-muted);">{{ desc }}</div>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="text-center pb-4">
+            <button type="submit" class="btn-primary-ns" style="padding:14px 48px;font-size:1rem;">
+                <i class="bi bi-cpu-fill"></i> Discover My Domain
+            </button>
+        </div>
+
+    </form>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleCard(el, group, value) {
+        el.classList.toggle('selected');
+        updateHiddenInputs(group);
+    }
+    function toggleChip(el, group, value) {
+        el.classList.toggle('selected');
+        updateHiddenInputs(group);
+    }
+    function selectPersonality(idx) {
+        document.querySelectorAll('.personality-card').forEach(c => c.classList.remove('selected'));
+        document.getElementById('p_' + idx).classList.add('selected');
+    }
+    function updateHiddenInputs(group) {
+        const container = document.getElementById(group + '-inputs');
+        if (!container) return;
+        container.innerHTML = '';
+        const selected = [];
+        if (group === 'interests') {
+            document.querySelectorAll('.interest-card.selected .label').forEach(l => selected.push(l.textContent));
+        } else {
+            document.querySelectorAll('.' + group.slice(0, -1) + '-chip.selected, .subject-chip.selected').forEach(c => selected.push(c.textContent.trim()));
+            // handle skill chip separately
+            if (group === 'skills') {
+                container.innerHTML = '';
+                document.querySelectorAll('.skill-chip.selected').forEach(c => {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden'; inp.name = 'skills';
+                    inp.value = c.textContent.replace(/\s+/g, ' ').trim().replace('✔ ', '');
+                    container.appendChild(inp);
+                });
+                return;
+            }
+            if (group === 'subjects') {
+                container.innerHTML = '';
+                document.querySelectorAll('.subject-chip.selected').forEach(c => {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden'; inp.name = 'subjects'; inp.value = c.textContent.trim();
+                    container.appendChild(inp);
+                });
+                return;
+            }
+        }
+        selected.forEach(v => {
+            const inp = document.createElement('input');
+            inp.type = 'hidden'; inp.name = group.slice(0, -1); inp.value = v;
+            container.appendChild(inp);
+        });
+    }
+
+    // Override for interest cards
+    document.querySelectorAll && document.querySelectorAll('.interest-card').forEach(card => {
+        card.addEventListener('click', function () {
+            const container = document.getElementById('interests-inputs');
+            container.innerHTML = '';
+            document.querySelectorAll('.interest-card.selected .label').forEach(l => {
+                const inp = document.createElement('input');
+                inp.type = 'hidden'; inp.name = 'interests'; inp.value = l.textContent.trim();
+                container.appendChild(inp);
+            });
+        });
+    });
+</script>
+{% endblock %}
