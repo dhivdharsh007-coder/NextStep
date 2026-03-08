@@ -434,6 +434,9 @@ def daily_practice_view():
     questions = DAILY_QA.get(domain, DAILY_QA['Software Development'])
     return render_template('daily_practice.html', questions=questions, domain=domain)
 
-if __name__ == '__main__':
+import os
+
+if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
